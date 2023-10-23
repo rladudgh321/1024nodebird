@@ -1,5 +1,16 @@
-import '@/styles/globals.css'
+import React from 'react';
+import Head from 'next/head';
+import wrapper from '@/store/configureStore';
 
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />
+const App = ({Component}) => {
+  return (
+    <>
+      <Head>
+        <title>Nordbird</title>
+      </Head>
+      <Component />
+    </>
+  );
 }
+
+export default wrapper.withRedux(App);
