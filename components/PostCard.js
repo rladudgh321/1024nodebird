@@ -4,11 +4,21 @@ import FollowButton from './FollowButton';
 import PostImage from './PostImage';
 import CommentForm from './CommentForm';
 import { RetweetOutlined, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { useSelector, useDispatch } from 'react-redux';
+import { REMOVE_POST_REQUEST } from '@/reducer/post';
 
 const PostCard = ({post}) => {
+    const dispatch = useDispatch();
+    const { me } = useSelector((state)=>state.user);
     const [ openMessage, setOpenMessage ] = useState(false);
     const messageHandler = useCallback(()=>{
         setOpenMessage((prev) => !prev);
+    },[]);
+    const onRemoveBtn = useCallback(()=>{
+        dispatch({
+            type:REMOVE_POST_REQUEST,
+            data:post.id
+        })
     },[]);
     return (
         <>
@@ -16,14 +26,20 @@ const PostCard = ({post}) => {
                 extra={ <FollowButton post={post} /> }
                 cover={post.Image[0] && <PostImage images={post.Image} />}
                 actions={[
-                    <RetweetOutlined />, 
-                    <HeartOutlined />, 
-                    <MessageOutlined onClick={messageHandler} />,
-                    <Popover content={
+                    <RetweetOutlined key='retweet' />, 
+                    <HeartOutlined key='like' />, 
+                    <MessageOutlined key='content' onClick={messageHandler} />,
+                    <Popover key='more' content={
                         <Button.Group>
-                            <Button>수정</Button>
-                            <Button>삭제</Button>
-                            <Button>신고</Button>
+                            {
+                                me & post.User.id === me?.id
+                                ?
+                                <>
+                                    <Button>수정</Button>
+                                    <Button onClick={onRemoveBtn}>삭제</Button>
+                                </>
+                                :
+                                <Button>신고</Button>}
                         </Button.Group>
                     }>
                         <EllipsisOutlined />
@@ -39,7 +55,7 @@ const PostCard = ({post}) => {
             </Card>
             {
                 openMessage && (<>
-                    <CommentForm post={post} />
+                    { me && <CommentForm post={post} />}
                     <List
                         header={`${post.Comment.length}개의 댓글이 있습니다`}
                         bordered

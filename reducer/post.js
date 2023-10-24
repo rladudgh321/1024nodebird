@@ -32,28 +32,43 @@ const initialState = {
             }
         }]
     }],
+    removePostLoading:false,
+    removePostDone:false,
+    removePostError:null,
     addPostLoading:false,
     addPostDone:false,
     addPostError:null,
+    addCommentLoading:false,
+    addCommentDone:false,
+    addCommentError:null,
 }
 
 
+export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
 
-const dummyPost = (data) => 
-{
-        console.log("data",data);
-        return ({
-            id:shortid.generate(),
-            content:data,
+const dummyPost = (data) => ({
+            id:data.id,
+            content:data.content,
             User:{
                 id:1,
                 nickname:'김영호'
             },
+            Image:[{
+                src:'https://health.chosun.com/site/data/img_dir/2023/06/20/2023062002262_0.jpg'
+            },{
+                src:'https://health.chosun.com/site/data/img_dir/2022/05/04/2022050401754_0.jpg'
+            },{
+                src:'https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcRKo5mWOlF8xPviHgJFlo0cexqTPmvZhqxOoGQ_OlPZ3hlNU-0Te4WlGR0peNOXWzbe'
+            },],
             Comment:[{
                 id:1,
                 content:'안녕 친구야',
@@ -70,13 +85,32 @@ const dummyPost = (data) =>
                 }
             }]
         });
-};
 
 const dummyComment = (data) => ({
+    id:data.UserId,
+    content:data.content,
+    User:{
+        id:1,
+        nickname:'김영호'
+    }
 })
 
 const postReducer = (state = initialState, action) => produce(state, (draft) => {
     switch(action.type) {
+        case REMOVE_POST_REQUEST :
+            draft.removePostLoading = true;
+            draft.removePostDone = false;
+            draft.removePostError = null;
+            break;
+        case REMOVE_POST_SUCCESS :
+            draft.removePostLoading = false;
+            draft.removePostDone = true;
+            draft.mainPost = draft.mainPost.filter((v)=>v.id !== action.data);
+            break;
+        case REMOVE_POST_FAILURE :
+            draft.removePostLoading = false;
+            draft.removePostError = action.error;
+            break;
         case ADD_POST_REQUEST :
             draft.addPostLoading = true;
             draft.addPostDone = false;
@@ -91,9 +125,20 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.addPostLoading = false;
             draft.addPostError = action.error;
             break;
-        case ADD_COMMENT_REQUEST:
-            const post = draft.mainPost((v)=>v.id === action.data.PostId);
-            post.Comment.unshift(action.data.content);
+        case ADD_COMMENT_REQUEST :
+            draft.addCommentLoading = true;
+            draft.addCommentDone = false;
+            draft.addCommentError = null;
+            break;
+        case ADD_COMMENT_SUCCESS :
+            draft.addCommentLoading = false;
+            draft.addCommentDone = true;
+            const post = draft.mainPost.find((v)=>v.id === action.data.PostId);
+            post.Comment.unshift(dummyComment(action.data));
+            break;
+        case ADD_COMMENT_FAILURE :
+            draft.addCommentLoading = false;
+            draft.addCommentError = action.error;
             break;
         default :
             break;

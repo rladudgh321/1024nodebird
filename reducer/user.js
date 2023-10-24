@@ -49,10 +49,14 @@ export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
 export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
+
 const dummyUser = (data) => ({
     ...data,
     id:shortid.generate(),
     nickname:'권현주',
+    Post:[{id:1}, {id:2}],
     Followings:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}],
     Followers:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}]
 
@@ -155,6 +159,12 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case REMOVE_FOLLOWER_FAILURE :
             draft.removeFollowLoading = false;
             draft.removeFollowError = action.error;
+            break;
+        case ADD_POST_TO_ME :
+            draft.me.Post.push({id:action.data});
+            break;
+        case REMOVE_POST_OF_ME :
+            draft.me.Post  = draft.me.Post.filter((v)=>v.id !== action.data);
             break;
         default :
             break;

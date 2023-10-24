@@ -1,13 +1,19 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { Input, Button, Form } from 'antd';
 import styled from '@emotion/styled';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import useInput from '@/hooks/useInput';
 import { ADD_POST_REQUEST } from '@/reducer/post';
 
 const PostForm = () => {
     const dispatch = useDispatch();
-    const [ text, onChangeText ] = useInput('');
+    const { addPostLoading, addPostDone } = useSelector((state)=> state.post);
+    const [ text, onChangeText, setter ] = useInput('');
+    useEffect(()=>{
+        if(addPostDone) {
+            setter('');
+        }
+    },[addPostDone]);
     const onRef = useRef();
     const SubmitButton = styled(Button)`
         float:right;
@@ -18,7 +24,7 @@ const PostForm = () => {
     const onSubmit = useCallback(()=>{
         dispatch({
             type:ADD_POST_REQUEST,
-            data:{content: text}
+            data:text
         })
     },[text]);
     return (
@@ -30,7 +36,7 @@ const PostForm = () => {
                 </div>
                 <input type='file' style={{display:'none'}} ref={onRef} />
                 <Button onClick={uploadImage}>이미지 업로드</Button>
-                <SubmitButton type='primary' htmlType='submit'>짹잭</SubmitButton>
+                <SubmitButton type='primary' htmlType='submit' loading={addPostLoading}>짹잭</SubmitButton>
             </Form>
         </>
     );

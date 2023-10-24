@@ -3,11 +3,12 @@ import { List, Input, Button, Form } from 'antd';
 import useInput from '@/hooks/useInput';
 import styled from '@emotion/styled'
 import Link from 'next/link';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { LOG_IN_REQUEST } from '@/reducer/user';
 
 const LoginForm = () => {
     const dispatch = useDispatch();
+    const { loginLoading } = useSelector((state) => state.user)
     const [ id, setId ] = useInput('');
     const [ pwd, setPwd ] = useInput('');
     const SignUpButton = styled(Button)`
@@ -33,7 +34,7 @@ const LoginForm = () => {
                         <Input id='pwd' value={pwd} onChange={setPwd} />
                     </div>
                     <div>
-                        <Button type='primary' htmlType='submit'>로그인</Button>
+                        <Button type='primary' htmlType='submit' loading={loginLoading} >로그인</Button>
                         <Link href='/signup'>
                             <SignUpButton>회원가입</SignUpButton>
                         </Link>
