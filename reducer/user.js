@@ -4,8 +4,27 @@ import shortid from "shortid";
 const initialState = {
     me: null,
     signup: false,
-    
-
+    loginLoading: false,
+    loginDone: false,
+    loginError: null,
+    logoutLoading: false,
+    logoutDone: false,
+    logoutError: null,
+    signupLoading: false,
+    signupDone: false,
+    signupError: null,
+    changeNicknameEditLoading: false,
+    changeNicknameEditDone: false,
+    changeNicknameEditError: null,
+    followLoading: false,
+    followDone: false,
+    followError: null,
+    unfollowLoading: false,
+    unfollowDone: false,
+    unfollowError: null,
+    removeFollowLoading: false,
+    removeFollowDone: false,
+    removeFollowError: null,
 }
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -30,7 +49,7 @@ export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
 export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 
-export const dummyUser = (data) => ({
+const dummyUser = (data) => ({
     ...data,
     id:shortid.generate(),
     nickname:'권현주',
@@ -39,29 +58,103 @@ export const dummyUser = (data) => ({
 
 })
 
-const userReducer = (state = initialState, action) => produce(state, draft => {
+const userReducer = (state = initialState, action) => produce(state, (draft) => {
     switch(action.type) {
         case LOG_IN_REQUEST :
+            draft.loginLoading = true;
+            draft.loginDone = false;
+            draft.loginError = null;
+            break;
+        case LOG_IN_SUCCESS :
+            draft.loginLoading = false;
+            draft.loginDone = true;
             draft.me = dummyUser(action.data);
             break;
-        case LOG_OUT_REQUEST:
+        case LOG_IN_FAILURE :
+            draft.loginLoading = false;
+            draft.loginError = action.error;
+            break;
+        case LOG_OUT_REQUEST :
+            draft.logoutLoading = true;
+            draft.logoutDone = false;
+            draft.logoutError = null;
+            break;
+        case LOG_OUT_SUCCESS :
+            draft.logoutLoading = false;
+            draft.logoutDone = true;
             draft.me = null;
             break;
-        case SIGN_UP_REQUEST:
-            draft.signup = true;
+        case LOG_OUT_FAILURE :
+            draft.logoutLoading = false;
+            draft.logoutError = action.error;
             break;
-        case CHANGE_NICKNAME_EDIT_REQUEST:
+        case SIGN_UP_REQUEST :
+            draft.signupLoading = true;
+            draft.signupDone = false;
+            draft.signupError = null;
+            break;
+        case SIGN_UP_SUCCESS :
+            draft.signupLoading = false;
+            draft.signupDone = true;
+            break;
+        case SIGN_UP_FAILURE :
+            draft.signupLoading = false;
+            draft.signupError = action.error;
+            break;
+        case CHANGE_NICKNAME_EDIT_REQUEST :
+            draft.changeNicknameEditLoading = true;
+            draft.changeNicknameEditDone = false;
+            draft.changeNicknameEditError = null;
+            break;
+        case CHANGE_NICKNAME_EDIT_SUCCESS :
+            draft.changeNicknameEditLoading = false;
+            draft.changeNicknameEditDone = true;
             draft.me.nickname = action.data;
             break;
-        case FOLLOWING_REQUEST:
-            console.log('draft.me.Followings', draft.me.Followings);
-            draft.me.Followings.push({id:action.data, nickanme:'ddddddd'});
+        case CHANGE_NICKNAME_EDIT_FAILURE :
+            draft.changeNicknameEditLoading = false;
+            draft.changeNicknameEditError = action.error;
             break;
-        case UNFOLLOWING_REQUEST:
+        case FOLLOWING_REQUEST :
+            draft.followLoading = true;
+            draft.followDone = false;
+            draft.followError = null;
+            break;
+        case FOLLOWING_SUCCESS :
+            draft.followLoading = false;
+            draft.followDone = true;
+            break;
+        case FOLLOWING_FAILURE :
+            draft.followLoading = false;
+            draft.followError = action.error;
+            break;
+        case UNFOLLOWING_REQUEST :
+            draft.unfollowLoading = true;
+            draft.unfollowDone = false;
+            draft.unfollowError = null;
+            break;
+        case UNFOLLOWING_SUCCESS :
+            draft.unfollowLoading = false;
+            draft.unfollowDone = true;
             draft.me.Followings = draft.Followings.filter((v)=> v.id !== action.data);
             break;
-        case REMOVE_FOLLOWER_REQUEST:
+        case UNFOLLOWING_FAILURE :
+            draft.unfollowLoading = false;
+            draft.unfollowError = action.error;
+            break;
+        case REMOVE_FOLLOWER_REQUEST :
+            draft.removeFollowLoading = true;
+            draft.removeFollowDone = false;
+            draft.removeFollowError = null;
+            break;
+        case REMOVE_FOLLOWER_SUCCESS :
+            draft.removeFollowLoading = false;
+            draft.removeFollowDone = true;
             draft.me.Followers = draft.Followers.filter((v)=> v.id !== action.data);
+            break;
+        case REMOVE_FOLLOWER_FAILURE :
+            draft.removeFollowLoading = false;
+            draft.removeFollowError = action.error;
             break;
         default :
             break;

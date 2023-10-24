@@ -45,7 +45,7 @@ const SignUp = () => {
       data: { email, password, nickname }
     })
   },[email, password, nickname, passwordCheck, term]);
-  
+
   return (
     <>
       <AppLayout>
