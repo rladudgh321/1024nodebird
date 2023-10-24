@@ -127,6 +127,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case FOLLOWING_SUCCESS :
             draft.followLoading = false;
             draft.followDone = true;
+            draft.me.Followings.push({id:action.data, nickname:'kkk'});
             break;
         case FOLLOWING_FAILURE :
             draft.followLoading = false;
@@ -140,7 +141,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case UNFOLLOWING_SUCCESS :
             draft.unfollowLoading = false;
             draft.unfollowDone = true;
-            draft.me.Followings = draft.Followings.filter((v)=> v.id !== action.data);
+            draft.me.Followings = draft.me.Followings.filter((v)=> v.id !== action.data);
             break;
         case UNFOLLOWING_FAILURE :
             draft.unfollowLoading = false;

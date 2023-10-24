@@ -3,12 +3,16 @@ import { Card, Button, Avatar, Popover, List } from 'antd';
 import FollowButton from './FollowButton';
 import PostImage from './PostImage';
 import CommentForm from './CommentForm';
-import { RetweetOutlined, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { REMOVE_POST_REQUEST } from '@/reducer/post';
 
 const PostCard = ({post}) => {
     const dispatch = useDispatch();
+    const [ like, setLike ] = useState(false);
+    const toggleLike = useCallback(()=>{
+        setLike((prev) => !prev);
+    },[]);
     const { me } = useSelector((state)=>state.user);
     const [ openMessage, setOpenMessage ] = useState(false);
     const messageHandler = useCallback(()=>{
@@ -21,18 +25,20 @@ const PostCard = ({post}) => {
         })
     },[]);
     return (
-        <>
+        <div key={post.id}>
             <Card
-                extra={ <FollowButton post={post} /> }
-                cover={post.Image[0] && <PostImage images={post.Image} />}
+                extra={ me && <FollowButton post={post} /> }
+                cover={post.Image?.[0] && <PostImage images={post.Image} />}
                 actions={[
                     <RetweetOutlined key='retweet' />, 
-                    <HeartOutlined key='like' />, 
+                    me && like //로그인 한사람만 좋아요 누를 수 있도록
+                    ? <HeartTwoTone key='like' twoToneColor='red' onClick={toggleLike} />
+                    : <HeartOutlined key='unlike' onClick={toggleLike} />, 
                     <MessageOutlined key='content' onClick={messageHandler} />,
                     <Popover key='more' content={
                         <Button.Group>
                             {
-                                me & post.User.id === me?.id
+                                me & post.User?.id === me?.id
                                 ?
                                 <>
                                     <Button>수정</Button>
@@ -47,8 +53,8 @@ const PostCard = ({post}) => {
                 ]}
             >
                 <Card.Meta
-                    avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-                    title={post.User.nickname}
+                    avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
+                    title={post.User?.nickname}
                     description={post.content}
                 />
 
@@ -76,7 +82,7 @@ const PostCard = ({post}) => {
                     </>
                 )
             }
-        </>
+        </div>
     );
 }
 
