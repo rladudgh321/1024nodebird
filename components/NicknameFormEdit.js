@@ -9,10 +9,10 @@ const NicknameFormEdit = () => {
     const [editName, onChangeEditName] = useInput('');
     const onSubmit = useCallback(()=>{
         console.log({editName});
-        // dispatch({
-        //     type:CHANGE_NICKNAME_EDIT_REQUEST,
-        //     data:editName,
-        // })
+        dispatch({
+            type:CHANGE_NICKNAME_EDIT_REQUEST,
+            data:editName,
+        })
     },[editName]);
     return (
         <>

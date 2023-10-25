@@ -33,6 +33,7 @@ const initialState = {
             }
         }]
     }],
+    hasmore:true,
     removePostLoading:false,
     removePostDone:false,
     removePostError:null,
@@ -194,6 +195,7 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.loadPostsLoading = false;
             draft.loadPostsDone = true;
             draft.mainPost = action.data.concat(draft.mainPost);
+            draft.hasmore = draft.mainPost.length < 50;
             break;
         case LOAD_POSTS_FAILURE :
             draft.loadPostsLoading = false;

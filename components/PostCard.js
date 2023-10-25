@@ -3,9 +3,11 @@ import { Card, Button, Avatar, Popover, List } from 'antd';
 import FollowButton from './FollowButton';
 import PostImage from './PostImage';
 import CommentForm from './CommentForm';
+import PostCardContent from './PostCardContent';
 import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { REMOVE_POST_REQUEST } from '@/reducer/post';
+
 
 const PostCard = ({post}) => {
     const dispatch = useDispatch();
@@ -55,7 +57,7 @@ const PostCard = ({post}) => {
                 <Card.Meta
                     avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
                     title={post.User?.nickname}
-                    description={post.content}
+                    description={<PostCardContent content={post.content} />}
                 />
 
             </Card>
