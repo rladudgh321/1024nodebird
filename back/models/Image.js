@@ -8,6 +8,7 @@ class Image extends Sequelize.Model{
             allowNull:false,
             }
         },{
+            sequelize,
             timestamps:true,
             underscored:false,
             modelName:'Image',
@@ -17,7 +18,9 @@ class Image extends Sequelize.Model{
             collate:'utf8_general_ci',
         })
     }
-    static associate(db){}
+    static associate(db){
+        db.Image.belongsTo(db.Post);
+    }
 }
 
 module.exports = Image;
