@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import shortid from "shortid";
+import { faker } from '@faker-js/faker';
 
 const initialState = {
     mainPost: [{
@@ -32,6 +33,7 @@ const initialState = {
             }
         }]
     }],
+    hasmore:true,
     removePostLoading:false,
     removePostDone:false,
     removePostError:null,
@@ -41,6 +43,9 @@ const initialState = {
     addCommentLoading:false,
     addCommentDone:false,
     addCommentError:null,
+    loadPostsLoading:false,
+    loadPostsDone:false,
+    loadPostsError:null,
 }
 
 
@@ -53,6 +58,9 @@ export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 
 
 const dummyPost = (data) => ({
@@ -94,6 +102,44 @@ const dummyComment = (data) => ({
         nickname:'김영호'
     }
 })
+
+export const generateDummyPost = (number) => ( Array(number).fill().map(()=>({
+    id:shortid.generate(),
+    content:faker.word.words(15),
+    User: {
+        id:shortid.generate(),
+        nickname:faker.person.fullName(),
+    },
+    Image:[{
+        src:faker.image.avatar()
+    },{
+        src:faker.image.urlLoremFlickr(),
+    },{
+        src:faker.image.avatar()
+    },{
+        src:faker.image.urlLoremFlickr(),
+    },{
+        src:faker.image.avatar()
+    },{
+        src:faker.image.urlLoremFlickr(),
+    }],
+    Comment:[{
+        id:shortid.generate(),
+        content:faker.word.words(15),
+        User: {
+            id:shortid.generate(),
+            nickname:faker.person.fullName(),
+        }
+    },{
+        id:shortid.generate(),
+        content:faker.word.words(15),
+        User: {
+            id:shortid.generate(),
+            nickname:faker.person.fullName(),
+        }
+    }]
+})) )
+
 
 const postReducer = (state = initialState, action) => produce(state, (draft) => {
     switch(action.type) {
@@ -139,6 +185,21 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
         case ADD_COMMENT_FAILURE :
             draft.addCommentLoading = false;
             draft.addCommentError = action.error;
+            break;
+        case LOAD_POSTS_REQUEST :
+            draft.loadPostsLoading = true;
+            draft.loadPostsDone = false;
+            draft.loadPostsError = null;
+            break;
+        case LOAD_POSTS_SUCCESS :
+            draft.loadPostsLoading = false;
+            draft.loadPostsDone = true;
+            draft.mainPost = action.data.concat(draft.mainPost);
+            draft.hasmore = draft.mainPost.length < 50;
+            break;
+        case LOAD_POSTS_FAILURE :
+            draft.loadPostsLoading = false;
+            draft.loadPostsError = action.error;
             break;
         default :
             break;

@@ -55,7 +55,7 @@ export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 const dummyUser = (data) => ({
     ...data,
     id:shortid.generate(),
-    nickname:'권현주',
+    nickname: data.nickname || '권현주',
     Post:[{id:1}, {id:2}],
     Followings:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}],
     Followers:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}]
@@ -127,6 +127,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case FOLLOWING_SUCCESS :
             draft.followLoading = false;
             draft.followDone = true;
+            draft.me.Followings.push({id:action.data, nickname:'kkk'});
             break;
         case FOLLOWING_FAILURE :
             draft.followLoading = false;
@@ -140,7 +141,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case UNFOLLOWING_SUCCESS :
             draft.unfollowLoading = false;
             draft.unfollowDone = true;
-            draft.me.Followings = draft.Followings.filter((v)=> v.id !== action.data);
+            draft.me.Followings = draft.me.Followings.filter((v)=> v.id !== action.data);
             break;
         case UNFOLLOWING_FAILURE :
             draft.unfollowLoading = false;
@@ -154,7 +155,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case REMOVE_FOLLOWER_SUCCESS :
             draft.removeFollowLoading = false;
             draft.removeFollowDone = true;
-            draft.me.Followers = draft.Followers.filter((v)=> v.id !== action.data);
+            draft.me.Followers = draft.me.Followers.filter((v)=> v.id !== action.data);
             break;
         case REMOVE_FOLLOWER_FAILURE :
             draft.removeFollowLoading = false;

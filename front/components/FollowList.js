@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { List, Card } from 'antd';
 import { StopOutlined } from '@ant-design/icons';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { UNFOLLOWING_REQUEST, REMOVE_FOLLOWER_REQUEST } from '@/reducer/user';
+import Router from 'next/router';
 
 const FollowList = ({header, data}) => {
     const dispatch = useDispatch();
@@ -19,12 +20,16 @@ const FollowList = ({header, data}) => {
             })
         }
     };
+
+
+
     return (
         <>
             <List
                 bordered
                 size='small'
-                header={header}
+                header={`${header}   ${data.length}명`}
+                // header={header + ' ' + data.length + '명'}
                 dataSource={data}
                 grid={{xs:3, md:2}}
                 renderItem={(item)=>(

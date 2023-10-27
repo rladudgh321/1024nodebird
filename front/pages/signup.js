@@ -39,11 +39,13 @@ const SignUp = () => {
     if(!term) {
       setTermError(true);
     }
-    console.log({email, password, passwordCheck, term});
-    dispatch({
-      type: SIGN_UP_REQUEST,
-      data: { email, password, nickname }
-    })
+    if((password === passwordCheck) && term ) {
+      console.log({email, password, passwordCheck, term});
+      dispatch({
+        type: SIGN_UP_REQUEST,
+        data: { email, password, nickname }
+      })
+    }
   },[email, password, nickname, passwordCheck, term]);
 
   return (
