@@ -1,12 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Input } from 'antd';
 import useInput from '@/hooks/useInput';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { CHANGE_NICKNAME_EDIT_REQUEST } from '@/reducer/user';
 
 const NicknameFormEdit = () => {
     const dispatch = useDispatch();
-    const [editName, onChangeEditName] = useInput('');
+    const { changeNicknameEditDone } = useSelector((state)=>state.user);
+    const [editName, onChangeEditName, setter] = useInput('');
     const onSubmit = useCallback(()=>{
         console.log({editName});
         dispatch({
@@ -14,6 +15,11 @@ const NicknameFormEdit = () => {
             data:editName,
         })
     },[editName]);
+    useEffect(()=>{
+        if(changeNicknameEditDone) {
+            setter('')
+        }
+    },[changeNicknameEditDone]);
     return (
         <>
             <Input.Search enterButton="수정" addonBefore="닉네임" 

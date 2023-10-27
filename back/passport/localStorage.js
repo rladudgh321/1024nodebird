@@ -4,7 +4,6 @@ const { User } = require('../models');
 const bcrypt = require('bcrypt');
 
 module.exports = () => {
-    const message = { message: '잘못된 정보입니다' };
     passport.use('local', new LocalStorage({
         usernameField:'id',
         passwordField:'pwd',
@@ -19,10 +18,10 @@ module.exports = () => {
                 if(result) {
                     done(null, user);
                 } else {
-                    done(null, false, message);
+                    done(null, false, { message: '비밀번호 오류' });
                 }
             } else {
-                done(null, false, message);
+                done(null, false, { message: '이메일 오류' });
             }
         } catch (err) {
             done(err);

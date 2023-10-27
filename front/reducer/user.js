@@ -50,7 +50,7 @@ export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
-
+/*
 const dummyUser = (data) => ({
     id:shortid.generate(),
     nickname: data.nickname || '이름을 설정해주세요',
@@ -59,8 +59,8 @@ const dummyUser = (data) => ({
     Followings:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}],
     Followers:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}]
 
-})
-
+});
+*/
 const userReducer = (state = initialState, action) => produce(state, (draft) => {
     switch(action.type) {
         case LOG_IN_REQUEST :
@@ -71,7 +71,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case LOG_IN_SUCCESS :
             draft.loginLoading = false;
             draft.loginDone = true;
-            draft.me = dummyUser(action.data);
+            draft.me = action.data;
             break;
         case LOG_IN_FAILURE :
             draft.loginLoading = false;

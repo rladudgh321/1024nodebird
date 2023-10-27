@@ -13,8 +13,8 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors({
-    credentials:true,
     origin:true,
+    credentials:true,
 }))
 
 app.use((cookieParser(process.env.COOKIE_SECRETE)));

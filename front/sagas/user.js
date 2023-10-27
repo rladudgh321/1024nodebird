@@ -114,16 +114,15 @@ function* removeFollower(action) {
 }
 
 function changeNicknameEditAPI(data) {
-    return axios.post('/user/changeNicknameEdit', data );
+    return axios.patch('/user/changeNicknameEdit', {nickname: data} );
 }
 
 function* changeNicknameEdit(action) {
-    // yield call(changeNicknameEditAPI, action.data);
-    yield delay(1000);
+    const result = yield call(changeNicknameEditAPI, action.data);
     try {
         yield put({
             type: CHANGE_NICKNAME_EDIT_SUCCESS,
-            data: action.data
+            data: result.data
         })
     } catch (err) {
         console.error(err);
