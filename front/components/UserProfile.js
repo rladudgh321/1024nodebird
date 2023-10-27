@@ -25,7 +25,7 @@ const UserProfile = () => {
                 <Card.Meta
                     avatar={<Avatar>{me.nickname[0]}</Avatar>}
                     title={me.nickname}
-                    description="김영호가 만든다"
+                    description={me.description}
                 />
                 <Button onClick={onLogout} loading={logoutLoading} >로그아웃</Button>
             </Card>

@@ -3,7 +3,6 @@ import shortid from "shortid";
 
 const initialState = {
     me: null,
-    signup: false,
     loginLoading: false,
     loginDone: false,
     loginError: null,
@@ -53,9 +52,9 @@ export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
 const dummyUser = (data) => ({
-    ...data,
     id:shortid.generate(),
-    nickname: data.nickname || '권현주',
+    nickname: data.nickname || '이름을 설정해주세요',
+    description: data.description || '나는 행복한 사람이야',
     Post:[{id:1}, {id:2}],
     Followings:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}],
     Followers:[{id:1, nickname:'김소방'},{id:2, nickname:'이소방'},{id:3, nickname:'박소방'},{id:4, nickname:'홍소방'},{id:5, nickname:'푸소방'},{id:6, nickname:'호소방'},{id:7, nickname:'큐소방'},{id:8, nickname:'나소방'},{id:9, nickname:'천소방'}]

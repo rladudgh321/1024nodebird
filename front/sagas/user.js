@@ -15,9 +15,8 @@ function logoutAPI() {
     return axios.post('/user/logout' );
 }
 
-function* logout(action) {
-    // yield call(logoutAPI);
-    yield delay(1000);
+function* logout() {
+    yield call(logoutAPI);
     try {
         yield put({
             type: LOG_OUT_SUCCESS,
@@ -36,12 +35,11 @@ function loginAPI(data) {
 }
 
 function* login(action) {
-    // yield call(loginAPI, action.data);
-    yield delay(1000);
+    const result = yield call(loginAPI, action.data);
     try {
         yield put({
             type: LOG_IN_SUCCESS,
-            data: action.data
+            data: result.data
         })
     } catch (err) {
         console.error(err);
@@ -136,13 +134,13 @@ function* changeNicknameEdit(action) {
     } 
 }
 
+//email, password, nickname 
 function signupAPI(data) {
     return axios.post('/user', data );
 }
 
-function* signup() {
-    // yield call(signupAPI, action.data);
-    yield delay(1000);
+function* signup(action) {
+    yield call(signupAPI, action.data);
     try {
         yield put({
             type: SIGN_UP_SUCCESS,

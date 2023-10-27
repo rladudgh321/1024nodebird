@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { List, Input, Button, Form } from 'antd';
 import useInput from '@/hooks/useInput';
 import styled from '@emotion/styled'
@@ -8,7 +8,7 @@ import { LOG_IN_REQUEST } from '@/reducer/user';
 
 const LoginForm = () => {
     const dispatch = useDispatch();
-    const { loginLoading } = useSelector((state) => state.user)
+    const { loginLoading, loginError } = useSelector((state) => state.user)
     const [ id, setId ] = useInput('');
     const [ pwd, setPwd ] = useInput('');
     const SignUpButton = styled(Button)`
@@ -21,6 +21,11 @@ const LoginForm = () => {
             data:{id,pwd}
         })
     },[id,pwd]);
+    useEffect(()=>{
+        if(loginError) {
+            return alert(loginError);
+        }
+    },[loginError]);
     return (
         <>
             <List>
