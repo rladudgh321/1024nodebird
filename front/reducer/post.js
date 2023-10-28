@@ -1,9 +1,9 @@
 import { produce } from "immer";
-import shortid from "shortid";
-import { faker } from '@faker-js/faker';
+// import shortid from "shortid";
+// import { faker } from '@faker-js/faker';
 
-const initialState = {
-    mainPost: [{
+/*
+{
         id:shortid.generate(),
         content:'첫 게시글 #익스프레스 #노드',
         User:{
@@ -32,7 +32,46 @@ const initialState = {
                 nickname:'김지유'
             }
         }]
-    }],
+    }{
+        id:shortid.generate(),
+        content:'첫 게시글 #익스프레스 #노드',
+        User:{
+            id:1,
+            nickname:'김영호'
+        },
+        Image:[{
+            src:'https://health.chosun.com/site/data/img_dir/2023/06/20/2023062002262_0.jpg'
+        },{
+            src:'https://health.chosun.com/site/data/img_dir/2022/05/04/2022050401754_0.jpg'
+        },{
+            src:'https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcRKo5mWOlF8xPviHgJFlo0cexqTPmvZhqxOoGQ_OlPZ3hlNU-0Te4WlGR0peNOXWzbe'
+        },],
+        Comment:[{
+            id:1,
+            content:'안녕 친구야',
+            User:{
+                id:2,
+                nickname:'권현주'
+            }
+        }, {
+            id:2,
+            content:'힘내용',
+            User:{
+                id:3,
+                nickname:'김지유'
+            }
+        }]
+    }
+*/
+
+
+
+const initialState = {
+    mainPost: [],
+    imagePaths:[
+        'https://health.chosun.com/site/data/img_dir/2023/06/20/2023062002262_0.jpg',
+        'https://health.chosun.com/site/data/img_dir/2022/05/04/2022050401754_0.jpg',
+    ],
     hasmore:true,
     removePostLoading:false,
     removePostDone:false,
@@ -48,7 +87,7 @@ const initialState = {
     loadPostsError:null,
 }
 
-
+export const REMOVE_POST_IMAGE = 'REMOVE_POST_IMAGE';
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
@@ -63,36 +102,36 @@ export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 
 
-const dummyPost = (data) => ({
-            id:data.id,
-            content:data.content,
-            User:{
-                id:1,
-                nickname:'김영호'
-            },
-            Image:[{
-                src:'https://health.chosun.com/site/data/img_dir/2023/06/20/2023062002262_0.jpg'
-            },{
-                src:'https://health.chosun.com/site/data/img_dir/2022/05/04/2022050401754_0.jpg'
-            },{
-                src:'https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcRKo5mWOlF8xPviHgJFlo0cexqTPmvZhqxOoGQ_OlPZ3hlNU-0Te4WlGR0peNOXWzbe'
-            },],
-            Comment:[{
-                id:1,
-                content:'안녕 친구야',
-                User:{
-                    id:2,
-                    nickname:'권현주'
-                }
-            }, {
-                id:2,
-                content:'힘내용',
-                User:{
-                    id:3,
-                    nickname:'김지유'
-                }
-            }]
-        });
+// const dummyPost = (data) => ({
+//             id:data.id,
+//             content:data.content,
+//             User:{
+//                 id:1,
+//                 nickname:'김영호'
+//             },
+//             Image:[{
+//                 src:'https://health.chosun.com/site/data/img_dir/2023/06/20/2023062002262_0.jpg'
+//             },{
+//                 src:'https://health.chosun.com/site/data/img_dir/2022/05/04/2022050401754_0.jpg'
+//             },{
+//                 src:'https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcRKo5mWOlF8xPviHgJFlo0cexqTPmvZhqxOoGQ_OlPZ3hlNU-0Te4WlGR0peNOXWzbe'
+//             },],
+//             Comment:[{
+//                 id:1,
+//                 content:'안녕 친구야',
+//                 User:{
+//                     id:2,
+//                     nickname:'권현주'
+//                 }
+//             }, {
+//                 id:2,
+//                 content:'힘내용',
+//                 User:{
+//                     id:3,
+//                     nickname:'김지유'
+//                 }
+//             }]
+//         });
 
 const dummyComment = (data) => ({
     id:data.UserId,
@@ -103,46 +142,49 @@ const dummyComment = (data) => ({
     }
 })
 
-export const generateDummyPost = (number) => ( Array(number).fill().map(()=>({
-    id:shortid.generate(),
-    content:faker.word.words(15),
-    User: {
-        id:shortid.generate(),
-        nickname:faker.person.fullName(),
-    },
-    Image:[{
-        src:faker.image.avatar()
-    },{
-        src:faker.image.urlLoremFlickr(),
-    },{
-        src:faker.image.avatar()
-    },{
-        src:faker.image.urlLoremFlickr(),
-    },{
-        src:faker.image.avatar()
-    },{
-        src:faker.image.urlLoremFlickr(),
-    }],
-    Comment:[{
-        id:shortid.generate(),
-        content:faker.word.words(15),
-        User: {
-            id:shortid.generate(),
-            nickname:faker.person.fullName(),
-        }
-    },{
-        id:shortid.generate(),
-        content:faker.word.words(15),
-        User: {
-            id:shortid.generate(),
-            nickname:faker.person.fullName(),
-        }
-    }]
-})) )
+// export const generateDummyPost = (number) => ( Array(number).fill().map(()=>({
+//     id:shortid.generate(),
+//     content:faker.word.words(15),
+//     User: {
+//         id:shortid.generate(),
+//         nickname:faker.person.fullName(),
+//     },
+//     Image:[{
+//         src:faker.image.avatar()
+//     },{
+//         src:faker.image.urlLoremFlickr(),
+//     },{
+//         src:faker.image.avatar()
+//     },{
+//         src:faker.image.urlLoremFlickr(),
+//     },{
+//         src:faker.image.avatar()
+//     },{
+//         src:faker.image.urlLoremFlickr(),
+//     }],
+//     Comment:[{
+//         id:shortid.generate(),
+//         content:faker.word.words(15),
+//         User: {
+//             id:shortid.generate(),
+//             nickname:faker.person.fullName(),
+//         }
+//     },{
+//         id:shortid.generate(),
+//         content:faker.word.words(15),
+//         User: {
+//             id:shortid.generate(),
+//             nickname:faker.person.fullName(),
+//         }
+//     }]
+// })) )
 
 
 const postReducer = (state = initialState, action) => produce(state, (draft) => {
     switch(action.type) {
+        case REMOVE_POST_IMAGE : 
+            draft.imagePaths = draft.imagePaths.filter((v,i) => i !== action.data );
+            break;
         case REMOVE_POST_REQUEST :
             draft.removePostLoading = true;
             draft.removePostDone = false;
@@ -195,7 +237,7 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.loadPostsLoading = false;
             draft.loadPostsDone = true;
             draft.mainPost = action.data.concat(draft.mainPost);
-            draft.hasmore = draft.mainPost.length < 50;
+            draft.hasmore = draft.mainPost.length === 10;
             break;
         case LOAD_POSTS_FAILURE :
             draft.loadPostsLoading = false;

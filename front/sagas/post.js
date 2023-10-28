@@ -59,8 +59,7 @@ function addPostAPI(data) {
 }
 
 function* addPost(action) {
-    // yield call(addPostAPI, action.data);
-    const id = shortid.generate();
+    yield call(addPostAPI, action.data);
     yield delay(1000);
     try {
         yield put({
@@ -82,22 +81,21 @@ function* addPost(action) {
 }
 
 function loadPostsAPI(data) {
-    return axios.post('/user/loadPosts', data );
+    return axios.post('/post/loadPosts', data );
 }
 
 function* loadPosts(action) {
-    // yield call(loadPostsAPI, action.data);
-    yield delay(1000);
+    const result = yield call(loadPostsAPI, action.data);
     try {
         yield put({
             type: LOAD_POSTS_SUCCESS,
-            data: generateDummyPost(10),
+            data: result.data,
         });
     } catch (err) {
         console.error(err);
         yield put({
             type:LOAD_POSTS_FAILURE,
-            error:err.response.data
+            error:err.response.data,
         })
     } 
 }

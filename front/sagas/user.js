@@ -35,8 +35,8 @@ function loginAPI(data) {
 }
 
 function* login(action) {
-    const result = yield call(loginAPI, action.data);
     try {
+        const result = yield call(loginAPI, action.data);
         yield put({
             type: LOG_IN_SUCCESS,
             data: result.data
@@ -114,7 +114,7 @@ function* removeFollower(action) {
 }
 
 function changeNicknameEditAPI(data) {
-    return axios.patch('/user/changeNicknameEdit', {nickname: data} );
+    return axios.patch('/user/changeNicknameEdit', data );
 }
 
 function* changeNicknameEdit(action) {

@@ -112,7 +112,8 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case CHANGE_NICKNAME_EDIT_SUCCESS :
             draft.changeNicknameEditLoading = false;
             draft.changeNicknameEditDone = true;
-            draft.me.nickname = action.data;
+            draft.me.nickname = action.data.nickname;
+            draft.me.description = action.data.description;
             break;
         case CHANGE_NICKNAME_EDIT_FAILURE :
             draft.changeNicknameEditLoading = false;

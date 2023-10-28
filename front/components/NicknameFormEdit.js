@@ -6,26 +6,33 @@ import { CHANGE_NICKNAME_EDIT_REQUEST } from '@/reducer/user';
 
 const NicknameFormEdit = () => {
     const dispatch = useDispatch();
-    const { changeNicknameEditDone } = useSelector((state)=>state.user);
-    const [editName, onChangeEditName, setter] = useInput('');
+    const { changeNicknameEditDone, me } = useSelector((state)=>state.user);
+    const [editName, onChangeEditName, setEditName] = useInput(me.nickname);
+    const [ editText, onChangeEditText, setEditText ] = useInput(me.description);
     const onSubmit = useCallback(()=>{
-        console.log({editName});
+        console.log({editName, editText});
         dispatch({
             type:CHANGE_NICKNAME_EDIT_REQUEST,
-            data:editName,
+            data:{
+                editName, 
+                editText,
+            }
         })
-    },[editName]);
+    },[editName, editText]);
     useEffect(()=>{
         if(changeNicknameEditDone) {
-            setter('')
+            setEditName('');
+            setEditText('');
         }
     },[changeNicknameEditDone]);
     return (
         <>
             <Input.Search enterButton="수정" addonBefore="닉네임" 
             value={editName} 
+            placeholder='닉네임'
             onChange={onChangeEditName}
             onSearch={onSubmit} />
+            <Input.TextArea placeholder='나는 어떤 사람일까?' value={editText} onChange={onChangeEditText}  />
         </>
     );
 }
