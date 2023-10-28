@@ -162,10 +162,10 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.removeFollowError = action.error;
             break;
         case ADD_POST_TO_ME :
-            draft.me.Post.push({id:action.data});
+            draft.me.Posts.push({id:action.data.id, nickname:action.data.nickname});
             break;
         case REMOVE_POST_OF_ME :
-            draft.me.Post  = draft.me.Post.filter((v)=>v.id !== action.data);
+            draft.me.Posts  = draft.me.Post.filter((v)=>v.id !== action.data);
             break;
         default :
             break;

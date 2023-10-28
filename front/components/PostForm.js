@@ -3,7 +3,9 @@ import { Input, Button, Form } from 'antd';
 import styled from '@emotion/styled';
 import { useSelector, useDispatch } from 'react-redux';
 import useInput from '@/hooks/useInput';
-import { ADD_POST_REQUEST, REMOVE_POST_IMAGE } from '@/reducer/post';
+import { ADD_POST_REQUEST, REMOVE_POST_IMAGE, UPLOAD_IMAGE_REQUEST } from '@/reducer/post';
+
+const baseUrl = 'http://127.0.0.1:3065';
 
 const PostForm = () => {
     const dispatch = useDispatch();
@@ -21,6 +23,23 @@ const PostForm = () => {
     const uploadImage = useCallback(()=>{
         onRef.current.click();
     },[onRef.current]);
+    const onChangeImage = useCallback((e)=>{
+        console.log('e.target.files', e.target.files);
+        const formData = new FormData();
+        [].forEach.call(e.target.files, (f) => {
+            formData.append('images', f);
+        });
+        dispatch({
+            type: UPLOAD_IMAGE_REQUEST,
+            data: formData
+        })
+    },[]);
+    const onRemoveImage = useCallback((index) => () => {
+        dispatch({
+            type: REMOVE_POST_IMAGE,
+            data: index,
+        })
+    },[]);
     const onSubmit = useCallback(()=>{
         dispatch({
             type:ADD_POST_REQUEST,
@@ -29,22 +48,21 @@ const PostForm = () => {
     },[text]);
     return (
         <>
-            <Form onFinish={onSubmit} style={{ margin: 10 }} encType='multipart/forom-data'>
+            <Form onFinish={onSubmit} style={{ margin: 10 }} encType="multipart/form-data">
                 <Input.TextArea maxLength={140} value={text} onChange={onChangeText} />
                 <div>
                     {
                         imagePaths.map((v,i) => (
                             <div key={v} style={{display:'inline-block'}}>
-                                <img src={v} alt={v} width='200px' />
+                                <img src={`${baseUrl}/images/${v}`} alt={v} width='200px' />
                                 <div>
-                                    {console.log("button i", i)}
-                                    <Button>지우기</Button>
+                                    <Button onClick={onRemoveImage(i)}>지우기</Button>
                                 </div>
                             </div>
                         ))
                     }
                 </div>
-                <input type='file' style={{display:'none'}} ref={onRef} />
+                <input type='file' name='images' style={{display:'none'}} ref={onRef} onChange={onChangeImage} multiple />
                 <Button onClick={uploadImage}>이미지 업로드</Button>
                 <SubmitButton type='primary' htmlType='submit' loading={addPostLoading}>짹잭</SubmitButton>
             </Form>

@@ -68,10 +68,7 @@ import { produce } from "immer";
 
 const initialState = {
     mainPost: [],
-    imagePaths:[
-        'https://health.chosun.com/site/data/img_dir/2023/06/20/2023062002262_0.jpg',
-        'https://health.chosun.com/site/data/img_dir/2022/05/04/2022050401754_0.jpg',
-    ],
+    imagePaths:[],
     hasmore:true,
     removePostLoading:false,
     removePostDone:false,
@@ -85,6 +82,9 @@ const initialState = {
     loadPostsLoading:false,
     loadPostsDone:false,
     loadPostsError:null,
+    uploadImageLoading:false,
+    uploadImageDone:false,
+    uploadImageError:null,
 }
 
 export const REMOVE_POST_IMAGE = 'REMOVE_POST_IMAGE';
@@ -100,6 +100,9 @@ export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+export const UPLOAD_IMAGE_REQUEST = 'UPLOAD_IMAGE_REQUEST';
+export const UPLOAD_IMAGE_SUCCESS = 'UPLOAD_IMAGE_SUCCESS';
+export const UPLOAD_IMAGE_FAILURE = 'UPLOAD_IMAGE_FAILURE';
 
 
 // const dummyPost = (data) => ({
@@ -185,6 +188,20 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
         case REMOVE_POST_IMAGE : 
             draft.imagePaths = draft.imagePaths.filter((v,i) => i !== action.data );
             break;
+        case UPLOAD_IMAGE_REQUEST :
+            draft.uploadImageLoading = true;
+            draft.uploadImageDone = false;
+            draft.uploadImageError = null;
+            break;
+        case UPLOAD_IMAGE_SUCCESS :
+            draft.imagePaths = action.data;
+            draft.uploadImageLoading = false;
+            draft.uploadImageDone = true;
+            break;
+        case UPLOAD_IMAGE_FAILURE :
+            draft.uploadImageLoading = false;
+            draft.uploadImageError = action.error;
+            break;
         case REMOVE_POST_REQUEST :
             draft.removePostLoading = true;
             draft.removePostDone = false;
@@ -207,7 +224,7 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
         case ADD_POST_SUCCESS :
             draft.addPostLoading = false;
             draft.addPostDone = true;
-            draft.mainPost.unshift(dummyPost(action.data));
+            draft.mainPost.unshift(action.data);
             break;
         case ADD_POST_FAILURE :
             draft.addPostLoading = false;

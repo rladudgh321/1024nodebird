@@ -1,6 +1,7 @@
 import { ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE,
     ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE, REMOVE_POST_REQUEST,
-    REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE, LOAD_POSTS_REQUEST, LOAD_POSTS_SUCCESS, LOAD_POSTS_FAILURE, generateDummyPost,
+    REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE, LOAD_POSTS_REQUEST, LOAD_POSTS_SUCCESS, LOAD_POSTS_FAILURE, generateDummyPost, 
+    UPLOAD_IMAGE_REQUEST, UPLOAD_IMAGE_SUCCESS, UPLOAD_IMAGE_FAILURE,
 
 } from '@/reducer/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '@/reducer/user';
@@ -55,21 +56,19 @@ function* removePost(action) {
 }
 
 function addPostAPI(data) {
-    return axios.post('/user/addPost', data );
+    return axios.post('/post/addPost', {content: data} );
 }
 
 function* addPost(action) {
-    yield call(addPostAPI, action.data);
-    yield delay(1000);
     try {
+        const result = yield call(addPostAPI, action.data);
         yield put({
             type: ADD_POST_SUCCESS,
-            data: { content: action.data,
-                    id }
+            data: result.data,
         });
         yield put({
             type: ADD_POST_TO_ME,
-            data: id
+            data: result.data.id
         })
     } catch (err) {
         console.error(err);
@@ -85,8 +84,8 @@ function loadPostsAPI(data) {
 }
 
 function* loadPosts(action) {
-    const result = yield call(loadPostsAPI, action.data);
     try {
+    const result = yield call(loadPostsAPI, action.data);
         yield put({
             type: LOAD_POSTS_SUCCESS,
             data: result.data,
@@ -95,6 +94,26 @@ function* loadPosts(action) {
         console.error(err);
         yield put({
             type:LOAD_POSTS_FAILURE,
+            error:err.response.data,
+        })
+    } 
+}
+
+function uploadImageAPI(data) {
+    return axios.post('/post/image', data );
+}
+
+function* uploadImage(action) {
+    try {
+    const result = yield call(uploadImageAPI, action.data);
+        yield put({
+            type: UPLOAD_IMAGE_SUCCESS,
+            data: result.data,
+        });
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type:UPLOAD_IMAGE_FAILURE,
             error:err.response.data,
         })
     } 
@@ -116,8 +135,13 @@ function* watchRemovePost() {
     yield takeLatest(REMOVE_POST_REQUEST, removePost);
 }
 
+function* watchUploadImage() {
+    yield takeLatest(UPLOAD_IMAGE_REQUEST, uploadImage);
+}
+
 function* postSaga() {
     yield all([
+        fork(watchUploadImage),
         fork(watchRemovePost),
         fork(watchAddPost),
         fork(watchLoadPosts),
