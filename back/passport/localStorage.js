@@ -16,15 +16,16 @@ module.exports = () => {
             if(user) {
                 const result = await bcrypt.compare(password, user.password);
                 if(result) {
-                    done(null, user);
+                    return done(null, user);
                 } else {
-                    done(null, false, { message: '비밀번호 오류' });
+                    return done(null, false, { message: '비밀번호 오류' });
                 }
             } else {
-                done(null, false, { message: '이메일 오류' });
+                return done(null, false, { message: '이메일 오류' });
             }
         } catch (err) {
-            done(err);
+            console.error(err);
+            return done(err);
         }
     }));
 }

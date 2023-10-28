@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 exports.signup = async (req,res,next) => {
-    const { email, password, nickname, description } = req.body;
     try {
+        const { email, password, nickname, description } = req.body;
         const exUser = await User.findOne({
             where : { email }
         });
@@ -32,7 +32,6 @@ exports.login = (req,res,next) => {
             return next(err);
         }
         if(info) {
-            console.log('info', info);
             return res.status(403).send(info.message);
         }
         return req.login(user, async (err) => {
@@ -40,23 +39,29 @@ exports.login = (req,res,next) => {
                 console.error(err);
                 return next(err);
             }
-            const userWithoutPwd = await User.findOne({
-                where : { id: user.id },
-                attributes:['id', 'nickname', 'email', 'description'],
-                include:[{
-                    model:Post,
-                }, {
-                    model:User,
-                    as:'Followings',
-                }, {
-                    model:User,
-                    as:'Followers',
-                }, {
-                    model:Post,
-                    as:'Liked'
-                }]
-            })
-            return res.status(200).json(userWithoutPwd);
+            try {
+                const userWithoutPwd = await User.findOne({
+                    where : { id: user.id },
+                    attributes:['id', 'nickname', 'email', 'description'],
+                    include:[{
+                        model:Post,
+                    }, {
+                        model:User,
+                        as:'Followings',
+                    }, {
+                        model:User,
+                        as:'Followers',
+                    }, {
+                        model:Post,
+                        as:'Liked'
+                    }]
+                })
+                return res.status(200).json(userWithoutPwd);
+            } catch (err) {
+                console.error(err);
+                next(err);
+                req.session.destroy();
+            }
         });
     })(req,res,next);
 }
@@ -67,10 +72,10 @@ exports.logout = (req, res, next) => {
             console.error(err);
             next(err);
         }
+        req.session.destroy();
         return res.status(200).send('로그아웃 ok');
     })
 }
-
 
 exports.changeNicknameEdit = async (req,res,next) => {
     try {
@@ -79,11 +84,12 @@ exports.changeNicknameEdit = async (req,res,next) => {
             return res.status(403).send('자신 외 다른 사람의 닉네임을 변경 할 수 없습니다');
         }
         await User.update({
-            nickname:req.body.nickname,
+            nickname:req.body.editName,
+            description:req.body.editText
         }, {
             where: { id: user.id },
         });
-        res.status(200).json(req.body.nickname);
+        res.status(200).json({nickname:req.body.editName, description:req.body.editText});
     } catch (err) {
         console.error(err);
         next(err);
