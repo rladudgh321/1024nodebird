@@ -69,6 +69,7 @@ import { produce } from "immer";
 const initialState = {
     mainPost: [],
     imagePaths:[],
+    likePost:[],
     hasmore:true,
     removePostLoading:false,
     removePostDone:false,
@@ -85,6 +86,15 @@ const initialState = {
     uploadImageLoading:false,
     uploadImageDone:false,
     uploadImageError:null,
+    likeLoading:false,
+    likeDone:false,
+    likeError:null,
+    unlikeLoading:false,
+    unlikeDone:false,
+    unlikeError:null,
+    retweetLoading:false,
+    retweetDone:false,
+    retweetError:null,
 }
 
 export const REMOVE_POST_IMAGE = 'REMOVE_POST_IMAGE';
@@ -103,6 +113,15 @@ export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 export const UPLOAD_IMAGE_REQUEST = 'UPLOAD_IMAGE_REQUEST';
 export const UPLOAD_IMAGE_SUCCESS = 'UPLOAD_IMAGE_SUCCESS';
 export const UPLOAD_IMAGE_FAILURE = 'UPLOAD_IMAGE_FAILURE';
+export const LIKE_REQUEST = 'LIKE_REQUEST';
+export const LIKE_SUCCESS = 'LIKE_SUCCESS';
+export const LIKE_FAILURE = 'LIKE_FAILURE';
+export const UNLIKE_REQUEST = 'UNLIKE_REQUEST';
+export const UNLIKE_SUCCESS = 'UNLIKE_SUCCESS';
+export const UNLIKE_FAILURE = 'UNLIKE_FAILURE';
+export const RETWEET_REQUEST = 'RETWEET_REQUEST';
+export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
+export const RETWEET_FAILURE = 'RETWEET_FAILURE';
 
 
 // const dummyPost = (data) => ({
@@ -202,6 +221,38 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.uploadImageLoading = false;
             draft.uploadImageError = action.error;
             break;
+        case LIKE_REQUEST :
+            draft.likeLoading = true;
+            draft.likeDone = false;
+            draft.likeError = null;
+            break;
+        case LIKE_SUCCESS : {
+            const post = draft.mainPost.find((v)=> v.id === action.data.PostId);
+            post.Likers.push({id:action.data.UserId});
+            draft.likeLoading = false;
+            draft.likeDone = true;
+            break;
+        }
+        case LIKE_FAILURE :
+            draft.likeLoading = false;
+            draft.likeError = action.error;
+            break;
+        case UNLIKE_REQUEST :
+            draft.unlikeLoading = true;
+            draft.unlikeDone = false;
+            draft.unlikeError = null;
+            break;
+        case UNLIKE_SUCCESS :{
+            const post = draft.mainPost.find((v)=> v.id === action.data.PostId);
+            post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId );
+            draft.unlikeLoading = false;
+            draft.unlikeDone = true;
+            break;
+        }
+        case UNLIKE_FAILURE :
+            draft.unlikeLoading = false;
+            draft.unlikeError = action.error;
+            break;
         case REMOVE_POST_REQUEST :
             draft.removePostLoading = true;
             draft.removePostDone = false;
@@ -225,6 +276,7 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.addPostLoading = false;
             draft.addPostDone = true;
             draft.mainPost.unshift(action.data);
+            draft.imagePaths = [];
             break;
         case ADD_POST_FAILURE :
             draft.addPostLoading = false;
@@ -239,7 +291,7 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.addCommentLoading = false;
             draft.addCommentDone = true;
             const post = draft.mainPost.find((v)=>v.id === action.data.PostId);
-            post.Comment.unshift(dummyComment(action.data));
+            post.Comments.unshift(action.data);
             break;
         case ADD_COMMENT_FAILURE :
             draft.addCommentLoading = false;
@@ -253,12 +305,26 @@ const postReducer = (state = initialState, action) => produce(state, (draft) => 
         case LOAD_POSTS_SUCCESS :
             draft.loadPostsLoading = false;
             draft.loadPostsDone = true;
-            draft.mainPost = action.data.concat(draft.mainPost);
-            draft.hasmore = draft.mainPost.length === 10;
+            draft.mainPost = draft.mainPost.concat(action.data);
+            draft.hasmore = action.data.length === 10;
             break;
         case LOAD_POSTS_FAILURE :
             draft.loadPostsLoading = false;
             draft.loadPostsError = action.error;
+            break;
+        case RETWEET_REQUEST :
+            draft.retweetLoading = true;
+            draft.retweetDone = false;
+            draft.retweetError = null;
+            break;
+        case RETWEET_SUCCESS :
+            draft.retweetLoading = false;
+            draft.retweetDone = true;
+            draft.mainPost.unshift(action.data);
+            break;
+        case RETWEET_FAILURE :
+            draft.retweetLoading = false;
+            draft.retweetError = action.error;
             break;
         default :
             break;

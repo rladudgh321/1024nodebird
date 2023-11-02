@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { isLoggedIn, isNotLoggedIn } = require('../middleware');
-const { loadPosts, uploadImage, addPost } = require('../controllers/post');
+const { uploadImage, addPost, likePost, unlikePost, 
+    addComment, retweet, removePost } = require('../controllers/post');
 const fs = require('fs');
 const path = require('path');
 
@@ -13,7 +14,6 @@ try {
     fs.mkdirSync('uploads');
 }
 
-router.post('/loadPosts', loadPosts);
 
 const uploads = multer({
     storage:multer.diskStorage({
@@ -28,8 +28,13 @@ const uploads = multer({
     }),
     limits: { fieldSize: 20 * 1024 * 1024 }
 })
-router.post('/image', isLoggedIn, uploads.array('images') ,uploadImage);
 
+router.post('/image', isLoggedIn, uploads.array('images') ,uploadImage);
 router.post('/addPost', isLoggedIn, addPost);
+router.post('/:postId/addComment', isLoggedIn, addComment);
+router.post('/:postId/retweet', isLoggedIn, retweet );
+router.patch('/:postId/like', isLoggedIn, likePost);
+router.delete('/:postId/like', isLoggedIn, unlikePost);
+router.delete('/:postId/removePost', isLoggedIn, removePost);
 
 module.exports = router;

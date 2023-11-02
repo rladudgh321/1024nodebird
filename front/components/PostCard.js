@@ -6,41 +6,68 @@ import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { REMOVE_POST_REQUEST } from '@/reducer/post';
+import { LIKE_REQUEST, REMOVE_POST_REQUEST, UNLIKE_REQUEST, RETWEET_REQUEST } from '@/reducer/post';
 
 
 const PostCard = ({post}) => {
     const dispatch = useDispatch();
-    const [ like, setLike ] = useState(false);
-    const toggleLike = useCallback(()=>{
-        setLike((prev) => !prev);
-    },[]);
     const { me } = useSelector((state)=>state.user);
+    const likePostBtn = useCallback(()=>{
+        if(!me?.id){
+            return null;
+        }
+        dispatch({
+            type:LIKE_REQUEST,
+            data:post.id
+        })
+    },[me]);
+    const unlikePostBtn = useCallback(()=>{
+        if(!me?.id){
+            return null;
+        }
+        dispatch({
+            type:UNLIKE_REQUEST,
+            data:post.id
+        })
+    },[me]);
     const [ openMessage, setOpenMessage ] = useState(false);
     const messageHandler = useCallback(()=>{
         setOpenMessage((prev) => !prev);
     },[]);
     const onRemoveBtn = useCallback(()=>{
+        if(!me?.id){
+            return null;
+        }
         dispatch({
             type:REMOVE_POST_REQUEST,
             data:post.id
         })
-    },[]);
+    },[me]);
+    const onRetweet = useCallback(()=>{
+        if(!me?.id){
+            return null;
+        }
+        dispatch({
+            type:RETWEET_REQUEST,
+            data:post.id
+        })
+    },[me]);
+    const isLiked = post.Likers.find((v) => v.id === me?.id);
     return (
         <div key={post.id}>
             <Card
-                extra={ me && <FollowButton post={post} /> }
-                cover={post.Image?.[0] && <PostImage images={post.Image} />}
+                extra={ (me && post.User.id !== me.id) && <FollowButton post={post} /> }
+                cover={post.Images[0] && <PostImage images={post.Images} />}
                 actions={[
-                    <RetweetOutlined key='retweet' />, 
-                    me && like //로그인 한사람만 좋아요 누를 수 있도록
-                    ? <HeartTwoTone key='like' twoToneColor='red' onClick={toggleLike} />
-                    : <HeartOutlined key='unlike' onClick={toggleLike} />, 
+                    <RetweetOutlined key='retweet' onClick={onRetweet} />, 
+                    me && isLiked //로그인 한사람만 좋아요 누를 수 있도록
+                    ? <HeartTwoTone key='like' twoToneColor='red' onClick={unlikePostBtn} />
+                    : <HeartOutlined key='unlike' onClick={likePostBtn} />, 
                     <MessageOutlined key='content' onClick={messageHandler} />,
                     <Popover key='more' content={
                         <Button.Group>
                             {
-                                me & post.User?.id === me?.id
+                                me && post.User.id === me.id
                                 ?
                                 <>
                                     <Button>수정</Button>
@@ -54,21 +81,34 @@ const PostCard = ({post}) => {
                     </Popover>
                 ]}
             >
-                <Card.Meta
-                    avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
-                    title={post.User?.nickname}
-                    description={<PostCardContent content={post.content} />}
-                />
-
+                {
+                    post.RetweetId && post.Retweet
+                    ? <Card
+                        title={ `${post.User.nickname}님이 리트윗했습니다` }
+                        cover={post.Retweet.Images[0] && <PostImage images={post.Retweet.Images} />}
+                    >
+                        <Card.Meta 
+                            avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+                            title={post.Retweet.User.nickname}
+                            description={<PostCardContent content={post.Retweet.content} />}
+                        />
+                    </Card>
+                    :    
+                    <Card.Meta
+                        avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
+                        title={post.User?.nickname}
+                        description={<PostCardContent content={post.content} />}
+                    />
+                }
             </Card>
             {
                 openMessage && (<>
                     { me && <CommentForm post={post} />}
                     <List
-                        header={`${post.Comment.length}개의 댓글이 있습니다`}
+                        header={`${post.Comments.length}개의 댓글이 있습니다`}
                         bordered
                         size='small'
-                        dataSource={post.Comment}
+                        dataSource={post.Comments}
                         renderItem={(item) => (
                             <Card>
                                 <Card.Meta

@@ -47,8 +47,10 @@ passportConfig();
 
 const userRouter = require('./routes/user');
 const postRouter = require('./routes/post');
+const postsRouter = require('./routes/posts');
 app.use('/user', userRouter);
 app.use('/post', postRouter);
+app.use('/posts', postsRouter);
 
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 포트에서 서버 대기중');

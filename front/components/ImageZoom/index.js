@@ -8,6 +8,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
 import 'swiper/css';
 
+const dd = 'http://127.0.0.1:3065/images/'
+
 const ImageZoom = ({onClose, images}) => {
     const [ slide, setSlide ] = useState(1);
   return (
@@ -31,7 +33,7 @@ const ImageZoom = ({onClose, images}) => {
             >
               { images.map((v)=> (<SwiperSlide key={v.src} >
                 {
-                    <img src={v.src} style={{ maxHeight:'750px' }} />
+                    <img src={ dd + v.src} style={{ maxHeight:'750px' }} />
                 }
                 
                 </SwiperSlide>) ) }

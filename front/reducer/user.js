@@ -24,6 +24,9 @@ const initialState = {
     removeFollowLoading: false,
     removeFollowDone: false,
     removeFollowError: null,
+    loadMyInfoLoading: false,
+    loadMyInfoDone: false,
+    loadMyInfoError: null,
 }
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -47,6 +50,9 @@ export const UNFOLLOWING_FAILURE = 'UNFOLLOWING_FAILURE';
 export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
 export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
@@ -127,7 +133,7 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case FOLLOWING_SUCCESS :
             draft.followLoading = false;
             draft.followDone = true;
-            draft.me.Followings.push({id:action.data, nickname:'kkk'});
+            draft.me.Followings.push(action.data);
             break;
         case FOLLOWING_FAILURE :
             draft.followLoading = false;
@@ -161,11 +167,26 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
             draft.removeFollowLoading = false;
             draft.removeFollowError = action.error;
             break;
+        case LOAD_MY_INFO_REQUEST :
+            draft.loadMyInfoLoading = true;
+            draft.loadMyInfoDone = false;
+            draft.loadMyInfoError = null;
+            break;
+        case LOAD_MY_INFO_SUCCESS :
+            draft.loadMyInfoLoading = false;
+            draft.loadMyInfoDone = true;
+            draft.me = action.data;
+            break;
+        case LOAD_MY_INFO_FAILURE :
+            draft.loadMyInfoLoading = false;
+            draft.loadMyInfoError = action.error;
+            break;
+
         case ADD_POST_TO_ME :
             draft.me.Posts.push({id:action.data.id, nickname:action.data.nickname});
             break;
         case REMOVE_POST_OF_ME :
-            draft.me.Posts  = draft.me.Post.filter((v)=>v.id !== action.data);
+            draft.me.Posts  = draft.me.Posts.filter((v)=>v.id !== action.data);
             break;
         default :
             break;

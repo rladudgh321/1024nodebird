@@ -43,9 +43,9 @@ const PostForm = () => {
     const onSubmit = useCallback(()=>{
         dispatch({
             type:ADD_POST_REQUEST,
-            data:text
+            data: { content:text, imagePaths }
         });
-    },[text]);
+    },[text, imagePaths]);
     return (
         <>
             <Form onFinish={onSubmit} style={{ margin: 10 }} encType="multipart/form-data">

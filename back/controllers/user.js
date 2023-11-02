@@ -95,3 +95,86 @@ exports.changeNicknameEdit = async (req,res,next) => {
         next(err);
     }
 }
+
+exports.loadMyInfo = async (req,res,next) => {
+    try {
+        if(req.user){
+            const user = await User.findOne({
+                where: { id: req.user.id },
+                attributes:{
+                    exclude:['password']
+                },
+                include:[{
+                    model:Post,
+                },{
+                    model: User,
+                    as:'Followings'
+                }, {
+                    model:User,
+                    as:'Followers'
+                }]
+            })
+            return res.status(200).json(user);
+        } else {
+            return res.status(200).json(null);
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+
+exports.following = async(req,res,next) => {
+    try {
+        const user = await User.findOne({
+            where: { id: parseInt(req.params.userId, 10) },
+            attributes:{
+                exclude:['password']
+            }
+        });
+        if(!user){
+            return res.status(403).send('없는 사용자입니다');
+        }
+        await user.addFollowers(req.user.id);
+        return res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+exports.unfollowing = async(req,res,next) => {
+    try {
+        const user = await User.findOne({
+            where: { id: parseInt(req.params.userId, 10) },
+            attributes:{
+                exclude:['password']
+            }
+        });
+        if(!user){
+            return res.status(403).send('없는 사용자입니다');
+        }
+        await user.removeFollowers(req.user.id);
+        return res.status(200).json(user.id);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+exports.removeFollower = async(req,res,next) => {
+    try {
+        const user = await User.findOne({
+            where: { id: parseInt(req.params.userId, 10) },
+            attributes:{
+                exclude:['password']
+            }
+        });
+        if(!user){
+            return res.status(403).send('없는 사용자입니다');
+        }
+        await user.removeFollowings(req.user.id);
+        return res.status(200).json(user.id);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
