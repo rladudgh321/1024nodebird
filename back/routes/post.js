@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const { isLoggedIn, isNotLoggedIn } = require('../middleware');
 const { uploadImage, addPost, likePost, unlikePost, 
-    addComment, retweet, removePost } = require('../controllers/post');
+    addComment, retweet, removePost, loadPost } = require('../controllers/post');
 const fs = require('fs');
 const path = require('path');
 
@@ -36,5 +36,6 @@ router.post('/:postId/retweet', isLoggedIn, retweet );
 router.patch('/:postId/like', isLoggedIn, likePost);
 router.delete('/:postId/like', isLoggedIn, unlikePost);
 router.delete('/:postId/removePost', isLoggedIn, removePost);
+router.get('/:postId', loadPost);
 
 module.exports = router;

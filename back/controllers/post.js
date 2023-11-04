@@ -1,4 +1,5 @@
 const { Post, User, Image, Comment, Hashtag } = require('../models');
+const { Op } = require('sequelize');
 
 exports.uploadImage = (req,res) => {
     console.log('req.files', req.files);
@@ -203,3 +204,51 @@ exports.removePost = async (req,res,next) => {
         next(err);
     }
 }
+
+
+exports.loadPost = async (req,res,next) => {
+    try {
+        const post = await Post.findOne({
+            where: { id: req.params.postId }
+        });
+        if(!post) {
+            return res.status(404).send('존재하지 않은 게시글입니다');
+        }
+        const fullPost = await Post.findOne({
+            where: { id: post.id },
+            include:[{
+                model:User,
+                attributes:{
+                    exclude:['password'],
+                }
+            },{
+                model:User,
+                as:'Likers',
+                attributes:['id'],
+            },{
+                model:Image
+            }, {
+                model:Comment,
+                include:[{
+                    model:User,
+                    attributes:['id','nickname'],
+                }]
+            }, {
+                model:Post,
+                as:'Retweet',
+                include:[{
+                    model:Image
+                }, {
+                    model:User,
+                    attributes:{
+                        exclude:['password']
+                    }
+                }]
+            }]
+        });
+        res.status(200).json(fullPost);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+};

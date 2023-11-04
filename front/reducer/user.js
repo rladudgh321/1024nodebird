@@ -3,6 +3,7 @@ import shortid from "shortid";
 
 const initialState = {
     me: null,
+    userInfo:null,
     loginLoading: false,
     loginDone: false,
     loginError: null,
@@ -27,6 +28,9 @@ const initialState = {
     loadMyInfoLoading: false,
     loadMyInfoDone: false,
     loadMyInfoError: null,
+    loadUserInfoLoading: false,
+    loadUserInfoDone: false,
+    loadUserInfoError: null,
 }
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -53,6 +57,9 @@ export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
 export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+export const LOAD_USER_INFO_REQUEST = 'LOAD_USER_INFO_REQUEST';
+export const LOAD_USER_INFO_SUCCESS = 'LOAD_USER_INFO_SUCCESS';
+export const LOAD_USER_INFO_FAILURE = 'LOAD_USER_INFO_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
@@ -180,6 +187,20 @@ const userReducer = (state = initialState, action) => produce(state, (draft) => 
         case LOAD_MY_INFO_FAILURE :
             draft.loadMyInfoLoading = false;
             draft.loadMyInfoError = action.error;
+            break;
+        case LOAD_USER_INFO_REQUEST :
+            draft.loadUserInfoLoading = true;
+            draft.loadUserInfoDone = false;
+            draft.loadUserInfoError = null;
+            break;
+        case LOAD_USER_INFO_SUCCESS :
+            draft.loadUserInfoLoading = false;
+            draft.loadUserInfoDone = true;
+            draft.userInfo = action.data;
+            break;
+        case LOAD_USER_INFO_FAILURE :
+            draft.loadUserInfoLoading = false;
+            draft.loadUserInfoError = action.error;
             break;
 
         case ADD_POST_TO_ME :

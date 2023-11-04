@@ -4,3 +4,5 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+
+//post/[id].js process.env를 넣고 싶음

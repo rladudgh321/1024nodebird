@@ -18,7 +18,7 @@ const AppLayout = ({children}) => {
           key: 'profile',
         },
         {
-          label: <Input.Search enterButton />,
+          label: <Input.Search enterButton style={{ verticalAlign:'middle' }}/>,
           key: 'search',
         },
         {

@@ -5,11 +5,12 @@ import { LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS,
     REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, 
     CHANGE_NICKNAME_EDIT_REQUEST, CHANGE_NICKNAME_EDIT_SUCCESS, CHANGE_NICKNAME_EDIT_FAILURE, 
     SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, 
-    LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE,
+    LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE, 
+    LOAD_USER_INFO_REQUEST, LOAD_USER_INFO_SUCCESS, LOAD_USER_INFO_FAILURE,
     
 } from '@/reducer/user';
 import axios from 'axios';
-import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 
 function logoutAPI() {
@@ -171,6 +172,26 @@ function* loadMyInfo() {
     } 
 }
 
+function loadUserInfoAPI(data) {
+    return axios.get(`/user/${data}`);
+}
+
+function* loadUserInfo(action) {
+    const result = yield call(loadUserInfoAPI, action.data);
+    try {
+        yield put({
+            type: LOAD_USER_INFO_SUCCESS,
+            data: result.data,
+        })
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type: LOAD_USER_INFO_FAILURE,
+            error:err.response.data
+        })
+    } 
+}
+
 function* watchLogout() {
     yield takeLatest(LOG_OUT_REQUEST, logout);
 }
@@ -203,8 +224,13 @@ function* watchLoadMyInfo() {
     yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
 
+function* watchLoadUserInfo() {
+    yield takeLatest(LOAD_USER_INFO_REQUEST, loadUserInfo);
+}
+
 function* userSaga() {
     yield all([
+        fork(watchLoadUserInfo),
         fork(watchLoadMyInfo),
         fork(watchSignup),
         fork(watchunChangeNicknameEdit),

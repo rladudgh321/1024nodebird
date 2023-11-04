@@ -5,22 +5,14 @@ import PostCard from '@/components/PostCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { LOAD_POSTS_REQUEST } from '@/reducer/post';
 import { LOAD_MY_INFO_REQUEST } from '@/reducer/user';
+import wrapper from '@/store/configureStore';
+import { END } from 'redux-saga';
+import axios from 'axios';
 
 const Home = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state)=>state.user);
   const { mainPost, hasmore, loadPostsLoading } = useSelector((state)=>state.post);
-
-
-  //10개 초기에 로딩
-  useEffect(()=>{
-    dispatch({
-      type:LOAD_POSTS_REQUEST,
-    });
-    dispatch({
-      type:LOAD_MY_INFO_REQUEST
-    });
-  },[]);
 
   // 페이지 내릴 때 로딩
   useEffect(()=>{
@@ -51,5 +43,23 @@ const Home = () => {
     </>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async ({req}) => {
+    console.log('index.js의 req.headers', req.headers); //브라우저의 쿠키정보
+    const cookie = req.headers.cookie;
+    axios.defaults.headers.Cookie = '';
+    if(req && cookie) { //서버쪽에서 실행되면 req
+      axios.defaults.headers.Cookie = cookie;
+    }
+  store.dispatch({
+    type:LOAD_POSTS_REQUEST,
+  });
+  store.dispatch({
+    type:LOAD_MY_INFO_REQUEST
+  });
+  store.dispatch(END);
+  await store.sagaTask.toPromise();
+});
 
 export default Home;
