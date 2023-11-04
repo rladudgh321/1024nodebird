@@ -150,6 +150,7 @@ function loadHashtagPostsAPI(data, lastId) {
 
 function* loadHashtagPosts(action) {
     try {
+        console.log('loadHashtagPosts****************************')
     const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
         yield put({
             type: LOAD_HASHTAG_POSTS_SUCCESS,
@@ -164,13 +165,13 @@ function* loadHashtagPosts(action) {
     } 
 }
 
-function loadPostsAPI(data, lastId) {
-    return axios.get(`/user/${data}/posts?lastId=${lastId || 0 }`);
+function loadPostsAPI(lastId) {
+    return axios.get(`/posts?lastId=${lastId || 0 }`);
 }
 
 function* loadPosts(action) {
     try {
-    const result = yield call(loadPostsAPI, action.data, action.lastId);
+    const result = yield call(loadPostsAPI, action.lastId);
         yield put({
             type: LOAD_POSTS_SUCCESS,
             data: result.data,

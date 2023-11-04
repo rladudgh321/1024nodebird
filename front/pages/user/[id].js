@@ -43,11 +43,11 @@ const User = () => {
             <AppLayout>
                 <Head>
                     <title>
-                        {`${userInfo}님의 글`}
+                        {`${userInfo.nickname}님의 글`}
                     </title>
-                    <meta name='description' content={userInfo.content} />
+                    <meta name='description' content={userInfo.description} />
                     <meta property='og:title' content={`${userInfo.nickname}님의 게시글`} />
-                    <meta property='og:description' content={userInfo.content} />
+                    <meta property='og:description' content={userInfo.description} />
                     <meta property='og:image' content= 'http://127.0.0.1:3060/favicon.ico' />
                     <meta property='og:url' content={`http://127.0.0.1:3060/post/${id}`} />
                 </Head>

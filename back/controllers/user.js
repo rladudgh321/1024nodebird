@@ -216,47 +216,87 @@ exports.removeFollower = async(req,res,next) => {
 //router.get('/:userId/posts', loadUserPosts);
 exports.loadUserPosts = async (req,res,next) => {
     try {
-        const where = { UserId: parseInt(req.params.userId, 10) };
-        if(parseInt(req.query.lastId, 10)) {
-            where.id = { [Op.lt] : parseInt(req.query.lastId, 10)  };
-        }
-        const posts = await Post.findAll({
-            where,
-            limit:10,
-            order:[['createdAt', 'DESC']],
-            include:[{
-                model:User,
-                attributes:{
-                    exclude:['password'],
-                }
-            },{
-                model:User,
-                as:'Likers',
-                attributes:['id'],
-            },{
-                model:Image
-            }, {
-                model:Comment,
+        const user = await User.findOne({ where: { id: parseInt(req.params.userId, 10) } });
+        if(user){
+            const where = {};
+            if(parseInt(req.query.lastId, 10)) {
+                where.id = { [Op.lt] : parseInt(req.query.lastId, 10)  };
+            }
+            const posts = await user.getPosts({
+                where,
+                limit:10,
+                order:[['createdAt', 'DESC']],
                 include:[{
-                    model:User,
-                    attributes:['id','nickname'],
-                }]
-            }, {
-                model:Post,
-                as:'Retweet',
-                include:[{
-                    model:Image
-                }, {
                     model:User,
                     attributes:{
-                        exclude:['password']
+                        exclude:['password'],
                     }
+                },{
+                    model:User,
+                    as:'Likers',
+                    attributes:['id'],
+                },{
+                    model:Image
+                }, {
+                    model:Comment,
+                    include:[{
+                        model:User,
+                        attributes:['id','nickname'],
+                    }]
+                }, {
+                    model:Post,
+                    as:'Retweet',
+                    include:[{
+                        model:Image
+                    }, {
+                        model:User,
+                        attributes:{
+                            exclude:['password']
+                        }
+                    }]
                 }]
-            }]
-        });
-        res.status(200).json(posts);
+            });
+            res.status(200).json(posts);
+        } else {
+            return res.status(404).send('존재하지 않은 사용자입니다')
+        }
     } catch (err) {
         console.error(err);
         next(err);
     }
 };
+
+exports.followings = async (req,res,next) => {
+    try {
+        const user = await User.findOne({ where: { id:req.user.id } });
+        if(!user) {
+             return res.status(403).send('존재하지 않는 사람입니다');
+        }
+        const followings = await user.getFollowings({
+            limit: parseInt(req.query.limit, 10),
+        });
+        console.log('followings', followings);
+        return res.status(200).json(followings);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+
+exports.followers = async (req,res,next) => {
+    try {
+        const user = await User.findOne({
+            where: { id: req.user.id }
+        });
+        if(!user) {
+            return res.status(403).send('존재하지 않는 사람입니다')
+        }
+        const followers = await user.getFollowers({
+            limit:parseInt(req.query.limit, 10)
+        });
+        return res.status(200).json(followers);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}

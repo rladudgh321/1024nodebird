@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
-import { List, Card } from 'antd';
+import { List, Card, Button } from 'antd';
 import { StopOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { UNFOLLOWING_REQUEST, REMOVE_FOLLOWER_REQUEST } from '@/reducer/user';
 import Router from 'next/router';
 
-const FollowList = ({header, data}) => {
+const FollowList = ({header, data, onClickMore, loading}) => {
     const dispatch = useDispatch();
     const onClickStop = (id) => ()=>{
         if(header === '팔로잉 목록') {
@@ -31,6 +31,11 @@ const FollowList = ({header, data}) => {
                 header={`${header}   ${data.length}명`}
                 // header={header + ' ' + data.length + '명'}
                 dataSource={data}
+                loadMore={(
+                    <div style={{ textAlign: 'center', margin:'10px 0'}}>
+                        <Button onClick={onClickMore} loading={loading}>더보기</Button>
+                    </div>
+                )}
                 grid={{xs:3, md:2}}
                 renderItem={(item)=>(
                     <Card
