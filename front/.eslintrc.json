@@ -12,7 +12,7 @@
     "node":true,
     "es6":true
   },
-  "plugin":["import", "react-hooks"],
+  "plugins":["import", "react-hooks"],
   "extends":["airbnb"],
   "rules":{
     "jsx-a11y/label-has-associated-control":"off",

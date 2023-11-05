@@ -8,7 +8,9 @@ import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, Ellipsis
 import { useSelector, useDispatch } from 'react-redux';
 import { LIKE_REQUEST, REMOVE_POST_REQUEST, UNLIKE_REQUEST, RETWEET_REQUEST } from '@/reducer/post';
 import Link from 'next/link';
+import moment from 'moment';
 
+moment.locale('ko');
 
 const PostCard = ({post}) => {
     const dispatch = useDispatch();
@@ -88,18 +90,23 @@ const PostCard = ({post}) => {
                         title={ `${post.User.nickname}님이 리트윗했습니다` }
                         cover={post.Retweet.Images[0] && <PostImage images={post.Retweet.Images} />}
                     >
+                        <div style={{float:'right'}}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
                         <Card.Meta 
                             avatar={<Link href={`/user/${post.Retweet.User.id}`}><Avatar>{post.Retweet.User.nickname[0]}</Avatar></Link>}
                             title={post.Retweet.User.nickname}
                             description={<PostCardContent content={post.Retweet.content} />}
                         />
                     </Card>
-                    :    
-                    <Card.Meta
-                        avatar={<Link href={`/user/${post.User.id}`}><Avatar>{post.User?.nickname[0]}</Avatar></Link>}
-                        title={post.User?.nickname}
-                        description={<PostCardContent content={post.content} />}
-                    />
+                    :
+                    <>    
+                        <div style={{float:'right'}}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
+                        <Card.Meta
+                            avatar={<Link href={`/user/${post.User.id}`}><Avatar>{post.User?.nickname[0]}</Avatar></Link>}
+                            title={post.User?.nickname}
+                            description={<PostCardContent content={post.content} />}
+                        />
+                    </>
+
                 }
             </Card>
             {
@@ -112,6 +119,7 @@ const PostCard = ({post}) => {
                         dataSource={post.Comments}
                         renderItem={(item) => (
                             <Card>
+                                <div style={{float:'right'}}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
                                 <Card.Meta
                                     avatar={<Link href={`/user/${item.User.id}`}><Avatar>{item.User.nickname[0]}</Avatar></Link>}
                                     title={item.User.nickname}
