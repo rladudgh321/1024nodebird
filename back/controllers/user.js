@@ -268,14 +268,15 @@ exports.loadUserPosts = async (req,res,next) => {
 
 exports.followings = async (req,res,next) => {
     try {
-        const user = await User.findOne({ where: { id:req.user.id } });
+        const user = await User.findOne({ 
+            where: { id:req.user.id }
+        });
         if(!user) {
              return res.status(403).send('존재하지 않는 사람입니다');
         }
         const followings = await user.getFollowings({
             limit: parseInt(req.query.limit, 10),
         });
-        console.log('followings', followings);
         return res.status(200).json(followings);
     } catch (err) {
         console.error(err);

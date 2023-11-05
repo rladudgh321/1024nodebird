@@ -7,6 +7,7 @@ import PostCardContent from './PostCardContent';
 import { RetweetOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { LIKE_REQUEST, REMOVE_POST_REQUEST, UNLIKE_REQUEST, RETWEET_REQUEST } from '@/reducer/post';
+import Link from 'next/link';
 
 
 const PostCard = ({post}) => {
@@ -88,14 +89,14 @@ const PostCard = ({post}) => {
                         cover={post.Retweet.Images[0] && <PostImage images={post.Retweet.Images} />}
                     >
                         <Card.Meta 
-                            avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+                            avatar={<Link href={`/user/${post.Retweet.User.id}`}><Avatar>{post.Retweet.User.nickname[0]}</Avatar></Link>}
                             title={post.Retweet.User.nickname}
                             description={<PostCardContent content={post.Retweet.content} />}
                         />
                     </Card>
                     :    
                     <Card.Meta
-                        avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
+                        avatar={<Link href={`/user/${post.User.id}`}><Avatar>{post.User?.nickname[0]}</Avatar></Link>}
                         title={post.User?.nickname}
                         description={<PostCardContent content={post.content} />}
                     />
@@ -112,7 +113,7 @@ const PostCard = ({post}) => {
                         renderItem={(item) => (
                             <Card>
                                 <Card.Meta
-                                    avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                                    avatar={<Link href={`/user/${item.User.id}`}><Avatar>{item.User.nickname[0]}</Avatar></Link>}
                                     title={item.User.nickname}
                                     description={item.content}
                                 />

@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Menu, Input, Row, Col, Card } from 'antd';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import UserProfile from '@/components/UserProfile';
 import LoginForm from '@/components/LoginForm';
+import useInput from '@/hooks/useInput';
+import Router from 'next/router';
 
 
 const AppLayout = ({children}) => {
     const { me } = useSelector((state)=>state.user);
+    const [onHashtag, onChangeHashtag] = useInput('');
+    const onSearch = useCallback(()=>{
+      Router.push(`/hashtag/${onHashtag}`)
+    },[onHashtag]);
     const items = [
         {
           label: <Link href="/">노드버드</Link>,
@@ -18,7 +24,9 @@ const AppLayout = ({children}) => {
           key: 'profile',
         },
         {
-          label: <Input.Search enterButton style={{ verticalAlign:'middle' }}/>,
+          label: <Input.Search enterButton style={{ verticalAlign:'middle' }}
+          value={onHashtag} onChange={onChangeHashtag} onSearch={onSearch}
+          />,
           key: 'search',
         },
         {

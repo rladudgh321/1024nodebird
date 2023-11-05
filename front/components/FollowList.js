@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { List, Card, Button } from 'antd';
 import { StopOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,7 +7,7 @@ import Router from 'next/router';
 
 const FollowList = ({header, data, onClickMore, loading}) => {
     const dispatch = useDispatch();
-    const onClickStop = (id) => ()=>{
+    const onClickStop = useCallback((id) => () => {
         if(header === '팔로잉 목록') {
             dispatch({
                 type:UNFOLLOWING_REQUEST,
@@ -19,16 +19,14 @@ const FollowList = ({header, data, onClickMore, loading}) => {
                 data:id
             })
         }
-    };
-
-
+    },[]);
 
     return (
         <>
             <List
                 bordered
                 size='small'
-                header={`${header}   ${data.length}명`}
+                header={`${header} ${data?.length}명`}
                 // header={header + ' ' + data.length + '명'}
                 dataSource={data}
                 loadMore={(
@@ -38,13 +36,15 @@ const FollowList = ({header, data, onClickMore, loading}) => {
                 )}
                 grid={{xs:3, md:2}}
                 renderItem={(item)=>(
-                    <Card
-                        actions={[<StopOutlined key='stop' onClick={onClickStop(item.id)} />]}
-                    >
-                        <Card.Meta
-                            description={item.nickname}
-                        />
-                    </Card>
+                    <List.Item>
+                        <Card
+                            actions={[<StopOutlined key={item.id} onClick={onClickStop(item.id)} />]}
+                        >
+                            <Card.Meta
+                                description={item.nickname}
+                            />
+                        </Card>
+                    </List.Item>
                 )}
             >
 

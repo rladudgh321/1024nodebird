@@ -46,8 +46,8 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({req}) => {
-    console.log('index.js의 req.headers', req.headers); //브라우저의 쿠키정보
-    const cookie = req.headers.cookie;
+    // console.log('index.js의 req.headers', req.headers); //브라우저의 쿠키정보
+    const cookie = req ? req.headers.cookie : '';
     axios.defaults.headers.Cookie = '';
     if(req && cookie) { //서버쪽에서 실행되면 req
       axios.defaults.headers.Cookie = cookie;

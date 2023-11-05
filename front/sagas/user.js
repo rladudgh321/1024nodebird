@@ -77,8 +77,8 @@ function unfollowingAPI(data) {
 }
 
 function* unfollowing(action) {
-    const result = yield call(unfollowingAPI, action.data);
     try {
+        const result = yield call(unfollowingAPI, action.data);
         yield put({
             type: UNFOLLOWING_SUCCESS,
             data: result.data
